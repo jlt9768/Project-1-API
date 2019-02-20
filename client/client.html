@@ -8,25 +8,41 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
   <script type="text/babel">
   
-  const parseJSON = (xhr, content) => {
+  const parseJSON = (xhr, content,method) => {
       const obj = JSON.parse(xhr.response);
       
-      if(obj.message) {
-        const p = document.createElement('p');
-        p.textContent = `Message: ${obj.message}`;
-        content.appendChild(p);
-      }
-      const nameField = nameForm.querySelector('#nameField');
+      const nameField = document.querySelector("#nameForm").querySelector('#nameField');
+      const chestPress = document.querySelector("#weightLiftingForm").querySelector('#chestPress');
+      const bicepCurl = document.querySelector("#weightLiftingForm").querySelector('#bicepCurl');
+      const tricepCurl = document.querySelector("#weightLiftingForm").querySelector('#tricepCurl');
+
+      console.dir(method);
       if(obj.users && obj.users[nameField.value]) {
-        const userList = document.createElement('p');
-        const users = JSON.stringify(obj.users[nameField.value]);
-        userList.textContent = users;
-        content.appendChild(userList);
+          console.dir("In");
+        if(obj.users[nameField.value].chestPress){
+            chestPress.value = obj.users[nameField.value].chestPress;
+        }else{
+            chestPress.value = "";
+        }
+        if(obj.users[nameField.value].bicepCurl){
+            bicepCurl.value= obj.users[nameField.value].bicepCurl;
+        }else{
+            bicepCurl.value = "";
+        }
+        if(obj.users[nameField.value].tricepCurl){
+            tricepCurl.value = obj.users[nameField.value].tricepCurl;
+        }else{
+            tricepCurl.value = "";
+        }
+      }else if((!obj.users || !obj.users[nameField.value])&& method === "get"){
+            const p = document.createElement('p');
+            p.textContent = `Message: No such user exists`;
+            content.appendChild(p);
       }
     };
 
 
-  const handleResponse = (xhr) => {
+  const handleResponse = (xhr,method) => {
       const content = document.querySelector('#content');
       
       switch(xhr.status){
@@ -34,24 +50,24 @@
               content.innerHTML = `<b> Success </b>`;
               break;
           case 201:
-              content.innerHTML = `<b> Created </b>`
+              content.innerHTML = `<b> Created </b>`;
               break;
           case 204:
-              content.innerHTML = `<b> Updated </b>`
+              content.innerHTML = `<b> Updated </b>`;
               break;
           case 400:
-              content.innerHTML = `<b> Bad Request </b>`
+              content.innerHTML = `<b> Bad Request </b>`;
               break;
           case 404:
-              content.innerHTML = `<b> Not Found </b>`
+              content.innerHTML = `<b> Not Found </b>`;
               break;
           default:
-              content.innerHTML = `<b> Error not implemented by client </b>`
+              content.innerHTML = `<b> Error not implemented by client </b>`;
               break;
       }
       
       if(xhr.response !== ""){
-          parseJSON(xhr,content);
+          parseJSON(xhr,content,method);
       }
       
   };
@@ -59,13 +75,13 @@
   const sendPost = (e, nameForm) => {
 
       const nameAction = nameForm.getAttribute('action');
-      const nameMethod = nameForm.getAttribute('method');
+      const method = nameForm.getAttribute('method');
       
       const nameField = nameForm.querySelector('#nameField');
       //const ageField = nameForm.querySelector('#ageField');
       
       const xhr = new XMLHttpRequest();
-      xhr.open(nameMethod, nameAction);
+      xhr.open(method, nameAction);
       
       //set our request type to x-www-form-urlencoded
       //which is one of the common types of form data. 
@@ -73,7 +89,7 @@
       xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
       xhr.setRequestHeader ('Accept', 'application/json');
       
-      xhr.onload = () => handleResponse(xhr);
+      xhr.onload = () => handleResponse(xhr,method);
       
       const formData = `name=${nameField.value}`;
       
@@ -81,10 +97,11 @@
       e.preventDefault();
       return false;
     };
+
     const sendPostWL = (e, wlForm) => {
 
       const nameAction = wlForm.getAttribute('action');
-      const nameMethod = wlForm.getAttribute('method');
+      const method = wlForm.getAttribute('method');
       
       const nameField = nameForm.querySelector('#nameField');
       const chestPress = wlForm.querySelector('#chestPress');
@@ -92,7 +109,7 @@
       const tricepCurl = wlForm.querySelector('#tricepCurl');
         
       const xhr = new XMLHttpRequest();
-      xhr.open(nameMethod, nameAction);
+      xhr.open(method, nameAction);
       
       //set our request type to x-www-form-urlencoded
       //which is one of the common types of form data. 
@@ -100,7 +117,7 @@
       xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
       xhr.setRequestHeader ('Accept', 'application/json');
       
-      xhr.onload = () => handleResponse(xhr);
+      xhr.onload = () => handleResponse(xhr,method);
       
       const formData = `name=${nameField.value}&chestPress=${chestPress.value}&bicepCurl=${bicepCurl.value}&tricepCurl=${tricepCurl.value}`;
       
@@ -112,10 +129,10 @@
     const sendAjax = (e, getForm) => {
         //console.dir(e);
         //const url = document.querySelector("#urlField").value;
-        //const method = document.querySelector("#methodSelect").value;
+        const method = 'get';
         
         const xhr = new XMLHttpRequest(); 
-        xhr.open('get', '/getUsers');
+        xhr.open(method, '/getUsers');
         
         //if(method === 'get'){
         //    
@@ -123,11 +140,12 @@
         //    xhr.onload = () => handleResponse(xhr);
         //}
         
-        xhr.onload = () => handleResponse(xhr);
+        xhr.onload = () => handleResponse(xhr,method);
         xhr.send(getForm);
         e.preventDefault();
         return false;
     };
+
     const init = () => {
         
       const nameForm = document.querySelector('#nameForm');
@@ -143,6 +161,7 @@
       weightLiftingForm.addEventListener('submit', updateWL);
       getForm.addEventListener('submit', getUser);
     };
+
     window.onload = init;
   </script>
 </head>
@@ -168,10 +187,10 @@
       <label for="chestpress">Chest Press: </label>
       <input id="chestPress" type="number" name="chestpress" min="0" max="300" step="1"/>
       <br>
-      <label for="bicepCurl">Bicep Curl: </label>
+      <label for="bicepcurl">Bicep Curl: </label>
       <input id="bicepCurl" type="number" name="bicepcurl" min="0" max="300" step="1"/>
       <br>
-      <label for="tricepCurl">Tricep Curl: </label>
+      <label for="tricepcurl">Tricep Curl: </label>
       <input id="tricepCurl" type="number" name="tricepcurl" min="0" max="300" step="1"/>
       <br>
       <br>
