@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <title>Our simple HTTP server</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <link rel="stylesheet" type="text/css" href="/style.css">
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
@@ -15,10 +16,10 @@
         p.textContent = `Message: ${obj.message}`;
         content.appendChild(p);
       }
-      
-      if(obj.users) {
+      const nameField = nameForm.querySelector('#nameField');
+      if(obj.users && obj.users[nameField.value]) {
         const userList = document.createElement('p');
-        const users = JSON.stringify(obj.users);
+        const users = JSON.stringify(obj.users[nameField.value]);
         userList.textContent = users;
         content.appendChild(userList);
       }
@@ -61,7 +62,7 @@
       const nameMethod = nameForm.getAttribute('method');
       
       const nameField = nameForm.querySelector('#nameField');
-      const ageField = nameForm.querySelector('#ageField');
+      //const ageField = nameForm.querySelector('#ageField');
       
       const xhr = new XMLHttpRequest();
       xhr.open(nameMethod, nameAction);
@@ -74,56 +75,109 @@
       
       xhr.onload = () => handleResponse(xhr);
       
-      const formData = `name=${nameField.value}&age=${ageField.value}`;
+      const formData = `name=${nameField.value}`;
+      
+      xhr.send(formData); 
+      e.preventDefault();
+      return false;
+    };
+    const sendPostWL = (e, wlForm) => {
+
+      const nameAction = wlForm.getAttribute('action');
+      const nameMethod = wlForm.getAttribute('method');
+      
+      const nameField = nameForm.querySelector('#nameField');
+      const chestPress = wlForm.querySelector('#chestPress');
+      const bicepCurl = wlForm.querySelector('#bicepCurl');
+      const tricepCurl = wlForm.querySelector('#tricepCurl');
+        
+      const xhr = new XMLHttpRequest();
+      xhr.open(nameMethod, nameAction);
+      
+      //set our request type to x-www-form-urlencoded
+      //which is one of the common types of form data. 
+      //This type has the same format as query strings key=value&key2=value2
+      xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+      xhr.setRequestHeader ('Accept', 'application/json');
+      
+      xhr.onload = () => handleResponse(xhr);
+      
+      const formData = `name=${nameField.value}&chestPress=${chestPress.value}&bicepCurl=${bicepCurl.value}&tricepCurl=${tricepCurl.value}`;
       
       xhr.send(formData); 
       e.preventDefault();
       return false;
     };
 
-    const sendAjax = (e, userForm) => {
-        const url = document.querySelector("#urlField").value;
-        const method = document.querySelector("#methodSelect").value;
+    const sendAjax = (e, getForm) => {
+        //console.dir(e);
+        //const url = document.querySelector("#urlField").value;
+        //const method = document.querySelector("#methodSelect").value;
         
         const xhr = new XMLHttpRequest(); 
-        xhr.open(method, url);
+        xhr.open('get', '/getUsers');
         
-        if(method === 'get'){
-            xhr.onload = () => handleResponse(xhr);
-        }else{
-            xhr.onload = () => handleResponse(xhr);
-        }
+        //if(method === 'get'){
+        //    
+        //}else{
+        //    xhr.onload = () => handleResponse(xhr);
+        //}
         
-        
-        xhr.send(userForm);
+        xhr.onload = () => handleResponse(xhr);
+        xhr.send(getForm);
         e.preventDefault();
         return false;
     };
     const init = () => {
         
       const nameForm = document.querySelector('#nameForm');
-      const userform = document.querySelector('#userForm');
+      const getForm = document.querySelector ('#getForm');
+      //const userform = document.querySelector('#userForm');
+      const weightLiftingForm = document.querySelector('#weightLiftingForm');
         
       const addUser = (e) => sendPost(e, nameForm);
-      const getUser = (e) => sendAjax(e,userForm);
+      const getUser = (e) => sendAjax(e, getForm);
+      const updateWL = (e) =>sendPostWL(e, weightLiftingForm);
         
       nameForm.addEventListener('submit', addUser);
-      userForm.addEventListener('submit', getUser);
+      weightLiftingForm.addEventListener('submit', updateWL);
+      getForm.addEventListener('submit', getUser);
     };
     window.onload = init;
   </script>
 </head>
 <body>
   <section id="top">
-    <h3>POST Status Code Tests</h3>
+    <h2>Fitness Tracker</h2>
     <form id="nameForm" action="/addUser" method="post">
       <label for="name">Name: </label>
       <input id="nameField" type="text" name="name" />
-      <label for="age">Age: </label>
+      <input type="submit" name = "add" value="Add User" />
+      
+      <!--<label for="age">Age: </label>
       <input id="ageField" type="number" name="age" min="0" max="100" step="1"/>
       <input type="submit" value="Add User" />
+      -->
     </form>
-    <form id="userForm" action="/getUsers" method="get">
+    <form id="getForm" action="/getUser" method="get">
+        <input type="submit" name = "get" value="Get User" />
+    </form>
+    <hr>
+    <h3>Weight Lifting</h3>
+    <form id="weightLiftingForm" action="/postWL" method="post">
+      <label for="chestpress">Chest Press: </label>
+      <input id="chestPress" type="number" name="chestpress" min="0" max="300" step="1"/>
+      <br>
+      <label for="bicepCurl">Bicep Curl: </label>
+      <input id="bicepCurl" type="number" name="bicepcurl" min="0" max="300" step="1"/>
+      <br>
+      <label for="tricepCurl">Tricep Curl: </label>
+      <input id="tricepCurl" type="number" name="tricepcurl" min="0" max="300" step="1"/>
+      <br>
+      <br>
+      <input type="submit" value="Update" />
+    </form>
+    <!--<form id="userForm" action="/getUsers" method="get">
       <select id='urlField'>
         <option value='/getUsers'>/getUsers</option>
         <option value='/notReal'>/notReal</option>
@@ -133,9 +187,13 @@
         <option value="head">HEAD</option>
       </select>
       <input type="submit" value="Get User" />
-    </form>
+    </form>-->
   </section>
   <section id="content">
   </section>
+    
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 </body>
 </html>

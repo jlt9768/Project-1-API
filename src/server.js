@@ -12,6 +12,7 @@ const urlStruct = {
   '/getUsers': jsonHandler.getUsers,
   '/notReal': jsonHandler.getNotReal,
   '/addUser': jsonHandler.addUser,
+  '/postWL': jsonHandler.postWL, 
   notFound: jsonHandler.notFound,
 };
 const urlMetaStruct = {
@@ -22,7 +23,6 @@ const urlMetaStruct = {
 
 
 const handlePost = (request, response, parsedUrl) => {
-  if (parsedUrl.pathname === '/addUser') {
     const res = response;
 
     const body = [];
@@ -44,9 +44,13 @@ const handlePost = (request, response, parsedUrl) => {
       const bodyParams = query.parse(bodyString);
 
       // pass to our addUser function
-      jsonHandler.addUser(request, res, bodyParams);
+        if (parsedUrl.pathname === '/addUser') {
+          jsonHandler.addUser(request, res, bodyParams);
+        }else if(parsedUrl.pathname === '/postWL'){
+          jsonHandler.updateWL(request, res, bodyParams);
+        }
     });
-  }
+  
 };
 const onRequest = (request, response) => {
   const parsedUrl = url.parse(request.url);

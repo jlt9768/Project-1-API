@@ -41,7 +41,7 @@ const addUser = (request, response, body) => {
     message: 'Name and age are both required.',
   };
 
-  if (!body.name || !body.age) {
+  if (!body.name) {
     responseJSON.id = 'missingParams';
     return respondJSON(request, response, 400, responseJSON);
   }
@@ -58,7 +58,7 @@ const addUser = (request, response, body) => {
 
   // add or update fields for this user name
   users[body.name].name = body.name;
-  users[body.name].age = body.age;
+  //users[body.name].age = body.age;
 
   if (responseCode === 201) {
     responseJSON.message = 'Created Successfully';
@@ -68,7 +68,47 @@ const addUser = (request, response, body) => {
   return respondJSONMeta(request, response, responseCode);
 };
 
+const updateWL = (request, response, body) => {
+  const responseJSON = {
+    message: 'Name is required.',
+  };
 
+  if (!body.name) {
+    responseJSON.id = 'missingParams';
+    return respondJSON(request, response, 400, responseJSON);
+  }
+
+  // default status code to 201 created
+  let responseCode = 201;
+
+
+  if (users[body.name]) {
+    responseCode = 204;
+  } else {
+    users[body.name] = {};
+  }
+
+  // add or update fields for this user name
+  users[body.name].name = body.name;
+  if(body.chestPress){
+      users[body.name].chestPress = body.chestPress;
+  }
+  if(body.bicepCurl){
+      users[body.name].bicepCurl = body.bicepCurl;
+  }
+  if(body.tricepCurl){
+      users[body.name].tricepCurl = body.tricepCurl;
+  }
+  
+  //users[body.name].age = body.age;
+
+  if (responseCode === 201) {
+    responseJSON.message = 'Created Successfully';
+    return respondJSON(request, response, responseCode, responseJSON);
+  }
+
+  return respondJSONMeta(request, response, responseCode);
+};
 // Not found response
 const notFound = (request, response) => {
   const responseJSON = {
@@ -86,5 +126,6 @@ module.exports = {
   getNotReal,
   getNotRealMeta,
   addUser,
+  updateWL,
   notFound,
 };
