@@ -58,7 +58,7 @@ const addUser = (request, response, body) => {
 
   // add or update fields for this user name
   users[body.name].name = body.name;
-  //users[body.name].age = body.age;
+  // users[body.name].age = body.age;
 
   if (responseCode === 201) {
     responseJSON.message = 'Created Successfully';
@@ -90,17 +90,65 @@ const updateWL = (request, response, body) => {
 
   // add or update fields for this user name
   users[body.name].name = body.name;
-  if(body.chestPress){
-      users[body.name].chestPress = body.chestPress;
+  if (body.chestPress) {
+    users[body.name].chestPress = body.chestPress;
   }
-  if(body.bicepCurl){
-      users[body.name].bicepCurl = body.bicepCurl;
+  if (body.bicepCurl) {
+    users[body.name].bicepCurl = body.bicepCurl;
   }
-  if(body.tricepCurl){
-      users[body.name].tricepCurl = body.tricepCurl;
+  if (body.tricepCurl) {
+    users[body.name].tricepCurl = body.tricepCurl;
   }
-  
-  //users[body.name].age = body.age;
+
+  if (body.shoulderPress) {
+    users[body.name].shoulderPress = body.shoulderPress;
+  }
+  if (body.legPress) {
+    users[body.name].legPress = body.legPress;
+  }
+
+  if (responseCode === 201) {
+    responseJSON.message = 'Created Successfully';
+    return respondJSON(request, response, responseCode, responseJSON);
+  }
+
+  return respondJSONMeta(request, response, responseCode);
+};
+const updateBW = (request, response, body) => {
+  const responseJSON = {
+    message: 'Name is required.',
+  };
+
+  if (!body.name) {
+    responseJSON.id = 'missingParams';
+    return respondJSON(request, response, 400, responseJSON);
+  }
+
+  // default status code to 201 created
+  let responseCode = 201;
+
+
+  if (users[body.name]) {
+    responseCode = 204;
+  } else {
+    users[body.name] = {};
+  }
+
+  // add or update fields for this user name
+  users[body.name].name = body.name;
+  if (body.pushUps) {
+    users[body.name].pushUps = body.pushUps;
+  }
+  if (body.sitUps) {
+    users[body.name].sitUps = body.sitUps;
+  }
+  if (body.pullUps) {
+    users[body.name].pullUps = body.pullUps;
+  }
+
+  if (body.burpees) {
+    users[body.name].burpees = body.burpees;
+  }
 
   if (responseCode === 201) {
     responseJSON.message = 'Created Successfully';
@@ -127,5 +175,6 @@ module.exports = {
   getNotRealMeta,
   addUser,
   updateWL,
+  updateBW,
   notFound,
 };

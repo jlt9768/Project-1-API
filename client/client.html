@@ -34,6 +34,36 @@
         }else{
             tricepCurl.value = "";
         }
+        if(obj.users[nameField.value].shoulderPress){
+            shoulderPress.value = obj.users[nameField.value].shoulderPress;
+        }else{
+            shoulderPress.value = "";
+        }
+        if(obj.users[nameField.value].legPress){
+            legPress.value = obj.users[nameField.value].legPress;
+        }else{
+            legPress.value = "";
+        }
+        if(obj.users[nameField.value].pushUps){
+            pushUps.value = obj.users[nameField.value].pushUps;
+        }else{
+            pushUps.value = "";
+        }
+        if(obj.users[nameField.value].sitUps){
+            sitUps.value = obj.users[nameField.value].sitUps;
+        }else{
+            sitUps.value = "";
+        }
+        if(obj.users[nameField.value].pullUps){
+            pullUps.value = obj.users[nameField.value].pullUps;
+        }else{
+            pullUps.value = "";
+        }
+        if(obj.users[nameField.value].burpees){
+            burpees.value = obj.users[nameField.value].burpees;
+        }else{
+            burpees.value = "";
+        }
       }else if((!obj.users || !obj.users[nameField.value])&& method === "get"){
             const p = document.createElement('p');
             p.textContent = `Message: No such user exists`;
@@ -45,26 +75,26 @@
   const handleResponse = (xhr,method) => {
       const content = document.querySelector('#content');
       
-      switch(xhr.status){
-          case 200:
-              content.innerHTML = `<b> Success </b>`;
-              break;
-          case 201:
-              content.innerHTML = `<b> Created </b>`;
-              break;
-          case 204:
-              content.innerHTML = `<b> Updated </b>`;
-              break;
-          case 400:
-              content.innerHTML = `<b> Bad Request </b>`;
-              break;
-          case 404:
-              content.innerHTML = `<b> Not Found </b>`;
-              break;
-          default:
-              content.innerHTML = `<b> Error not implemented by client </b>`;
-              break;
-      }
+      //switch(xhr.status){
+      //    case 200:
+      //        content.innerHTML = `<b> Success </b>`;
+      //        break;
+      //    case 201:
+      //        content.innerHTML = `<b> Created </b>`;
+      //        break;
+      //    case 204:
+      //        content.innerHTML = `<b> Updated </b>`;
+      //        break;
+      //    case 400:
+      //        content.innerHTML = `<b> Bad Request </b>`;
+      //        break;
+      //    case 404:
+      //        content.innerHTML = `<b> Not Found </b>`;
+      //        break;
+      //    default:
+      //        content.innerHTML = `<b> Error not implemented by client </b>`;
+      //        break;
+      //}
       
       if(xhr.response !== ""){
           parseJSON(xhr,content,method);
@@ -98,7 +128,7 @@
       return false;
     };
 
-    const sendPostWL = (e, wlForm) => {
+    const sendPostWL = (e, nameForm, wlForm) => {
 
       const nameAction = wlForm.getAttribute('action');
       const method = wlForm.getAttribute('method');
@@ -107,6 +137,8 @@
       const chestPress = wlForm.querySelector('#chestPress');
       const bicepCurl = wlForm.querySelector('#bicepCurl');
       const tricepCurl = wlForm.querySelector('#tricepCurl');
+      const shoulderPress = wlForm.querySelector('#shoulderPress');
+      const legPrss = wlForm.querySelector('#legPress');
         
       const xhr = new XMLHttpRequest();
       xhr.open(method, nameAction);
@@ -119,13 +151,40 @@
       
       xhr.onload = () => handleResponse(xhr,method);
       
-      const formData = `name=${nameField.value}&chestPress=${chestPress.value}&bicepCurl=${bicepCurl.value}&tricepCurl=${tricepCurl.value}`;
+      const formData = `name=${nameField.value}&chestPress=${chestPress.value}&bicepCurl=${bicepCurl.value}&tricepCurl=${tricepCurl.value}&shoulderPress=${shoulderPress.value}&legPress=${legPrss.value}`;
       
       xhr.send(formData); 
       e.preventDefault();
       return false;
     };
+    const sendPostBW = (e,nameform, bwForm) => {
 
+      const nameAction = bwForm.getAttribute('action');
+      const method = bwForm.getAttribute('method');
+      
+      const nameField = nameForm.querySelector('#nameField');
+      const pushUps = bwForm.querySelector('#pushUps');
+      const sitUps = bwForm.querySelector('#sitUps');
+      const pullUps = bwForm.querySelector('#pullUps');
+      const burpees = bwForm.querySelector('#burpees');
+        
+      const xhr = new XMLHttpRequest();
+      xhr.open(method, nameAction);
+      
+      //set our request type to x-www-form-urlencoded
+      //which is one of the common types of form data. 
+      //This type has the same format as query strings key=value&key2=value2
+      xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+      xhr.setRequestHeader ('Accept', 'application/json');
+      
+      xhr.onload = () => handleResponse(xhr,method);
+      
+      const formData = `name=${nameField.value}&pushUps=${pushUps.value}&sitUps=${sitUps.value}&pullUps=${pullUps.value}&burpees=${burpees.value}`;
+      
+      xhr.send(formData); 
+      e.preventDefault();
+      return false;
+    };
     const sendAjax = (e, getForm) => {
         //console.dir(e);
         //const url = document.querySelector("#urlField").value;
@@ -152,14 +211,17 @@
       const getForm = document.querySelector ('#getForm');
       //const userform = document.querySelector('#userForm');
       const weightLiftingForm = document.querySelector('#weightLiftingForm');
+      const bodyWeightForm = document.querySelector('#bodyWeightForm');
         
       const addUser = (e) => sendPost(e, nameForm);
       const getUser = (e) => sendAjax(e, getForm);
-      const updateWL = (e) =>sendPostWL(e, weightLiftingForm);
+      const updateWL = (e) => sendPostWL(e, nameForm, weightLiftingForm);
+      const updateBW = (e) => sendPostBW(e, nameForm, bodyWeightForm);
         
       nameForm.addEventListener('submit', addUser);
       weightLiftingForm.addEventListener('submit', updateWL);
       getForm.addEventListener('submit', getUser);
+        bodyWeightForm.addEventListener('submit', updateBW);
     };
 
     window.onload = init;
@@ -182,20 +244,61 @@
         <input type="submit" name = "get" value="Get User" />
     </form>
     <hr>
-    <h3>Weight Lifting</h3>
-    <form id="weightLiftingForm" action="/postWL" method="post">
-      <label for="chestpress">Chest Press: </label>
-      <input id="chestPress" type="number" name="chestpress" min="0" max="300" step="1"/>
-      <br>
-      <label for="bicepcurl">Bicep Curl: </label>
-      <input id="bicepCurl" type="number" name="bicepcurl" min="0" max="300" step="1"/>
-      <br>
-      <label for="tricepcurl">Tricep Curl: </label>
-      <input id="tricepCurl" type="number" name="tricepcurl" min="0" max="300" step="1"/>
-      <br>
-      <br>
-      <input type="submit" value="Update" />
-    </form>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <h3>Weight Lifting</h3>
+                <form id="weightLiftingForm" action="/postWL" method="post">
+                  <label for="chestpress">Chest Press: </label>
+                  <input id="chestPress" type="number" name="chestpress" min="0" max="300" step="1"/>
+                  <br>
+                  <label for="bicepcurl">Bicep Curl: </label>
+                  <input id="bicepCurl" type="number" name="bicepcurl" min="0" max="300" step="1"/>
+                  <br>
+                  <label for="tricepcurl">Tricep Curl: </label>
+                  <input id="tricepCurl" type="number" name="tricepcurl" min="0" max="300" step="1"/>
+                  <br>
+                  <label for="shoulderpress">Shoulder Press: </label>
+                  <input id="shoulderPress" type="number" name="shoulderpress" min="0" max="300" step="1"/>
+                  <br>
+                  <label for="legpress">Leg Press: </label>
+                  <input id="legPress" type="number" name="legpress" min="0" max="300" step="1"/>
+                  <br>
+                  <br>
+                  <input type="submit" value="Update" />
+                </form>
+            </div>
+            <div class="col-md-4">
+                <h3>Body Weight</h3>
+                <form id="bodyWeightForm" action="/postBW" method="post">
+                  <label for="pushups">Push Ups: </label>
+                  <input id="pushUps" type="number" name="pushups" min="0" max="300" step="1"/>
+                  <br>
+                  <label for="situps">Sit Ups: </label>
+                  <input id="sitUps" type="number" name="situps" min="0"  max="300"step="1"/>
+                  <br>
+                  <label for="pullups">Pull Ups: </label>
+                  <input id="pullUps" type="number" name="pullups" min="0" max="300"step="1"/>
+                  <br>
+                  <label for="burpees">Burpees: </label>
+                  <input id="burpees" type="number" name="burpees" min="0" max="300" step="1"/>
+                  <br>
+                  <br>
+                  <input type="submit" value="Update" />
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!--
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                
+            </div>
+        </div>
+    </div>
+    -->
     <!--<form id="userForm" action="/getUsers" method="get">
       <select id='urlField'>
         <option value='/getUsers'>/getUsers</option>

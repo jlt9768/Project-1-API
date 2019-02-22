@@ -12,7 +12,8 @@ const urlStruct = {
   '/getUsers': jsonHandler.getUsers,
   '/notReal': jsonHandler.getNotReal,
   '/addUser': jsonHandler.addUser,
-  '/postWL': jsonHandler.postWL, 
+  '/postWL': jsonHandler.postWL,
+  '/postBW': jsonHandler.postBW,
   notFound: jsonHandler.notFound,
 };
 const urlMetaStruct = {
@@ -23,34 +24,35 @@ const urlMetaStruct = {
 
 
 const handlePost = (request, response, parsedUrl) => {
-    const res = response;
+  const res = response;
 
-    const body = [];
+  const body = [];
 
-    request.on('error', (err) => {
-      console.dir(err);
-      res.statusCode = 400;
-      res.end();
-    });
+  request.on('error', (err) => {
+    console.dir(err);
+    res.statusCode = 400;
+    res.end();
+  });
 
-    request.on('data', (chunk) => {
-      body.push(chunk);
-    });
+  request.on('data', (chunk) => {
+    body.push(chunk);
+  });
 
-    // on end of upload stream.
-    request.on('end', () => {
-      const bodyString = Buffer.concat(body).toString();
+  // on end of upload stream.
+  request.on('end', () => {
+    const bodyString = Buffer.concat(body).toString();
 
-      const bodyParams = query.parse(bodyString);
+    const bodyParams = query.parse(bodyString);
 
-      // pass to our addUser function
-        if (parsedUrl.pathname === '/addUser') {
-          jsonHandler.addUser(request, res, bodyParams);
-        }else if(parsedUrl.pathname === '/postWL'){
-          jsonHandler.updateWL(request, res, bodyParams);
-        }
-    });
-  
+    // pass to our addUser function
+    if (parsedUrl.pathname === '/addUser') {
+      jsonHandler.addUser(request, res, bodyParams);
+    } else if (parsedUrl.pathname === '/postWL') {
+      jsonHandler.updateWL(request, res, bodyParams);
+    } else if(parsedUrl.pathname === '/postBW') {
+        jsonHandler.updateBW(request, res, bodyParams);
+    }
+  });
 };
 const onRequest = (request, response) => {
   const parsedUrl = url.parse(request.url);
