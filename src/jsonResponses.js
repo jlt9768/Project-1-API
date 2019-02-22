@@ -68,6 +68,7 @@ const addUser = (request, response, body) => {
   return respondJSONMeta(request, response, responseCode);
 };
 
+//Update all weight lifting values
 const updateWL = (request, response, body) => {
   const responseJSON = {
     message: 'Name is required.',
@@ -114,6 +115,8 @@ const updateWL = (request, response, body) => {
 
   return respondJSONMeta(request, response, responseCode);
 };
+
+//Update all Body weight values
 const updateBW = (request, response, body) => {
   const responseJSON = {
     message: 'Name is required.',
@@ -157,6 +160,40 @@ const updateBW = (request, response, body) => {
 
   return respondJSONMeta(request, response, responseCode);
 };
+
+const updateCardio = (request, response, body) => {
+  const responseJSON = {
+    message: 'Name is required.',
+  };
+
+  if (!body.name) {
+    responseJSON.id = 'missingParams';
+    return respondJSON(request, response, 400, responseJSON);
+  }
+
+  // default status code to 201 created
+  let responseCode = 201;
+
+
+  if (users[body.name]) {
+    responseCode = 204;
+  } else {
+    users[body.name] = {};
+  }
+
+  // add or update fields for this user name
+  users[body.name].name = body.name;
+  if (body.mile) {
+    users[body.name].mile = body.mile;
+  }
+
+  if (responseCode === 201) {
+    responseJSON.message = 'Created Successfully';
+    return respondJSON(request, response, responseCode, responseJSON);
+  }
+
+  return respondJSONMeta(request, response, responseCode);
+};
 // Not found response
 const notFound = (request, response) => {
   const responseJSON = {
@@ -176,5 +213,6 @@ module.exports = {
   addUser,
   updateWL,
   updateBW,
+  updateCardio,
   notFound,
 };

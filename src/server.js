@@ -51,6 +51,8 @@ const handlePost = (request, response, parsedUrl) => {
       jsonHandler.updateWL(request, res, bodyParams);
     } else if(parsedUrl.pathname === '/postBW') {
         jsonHandler.updateBW(request, res, bodyParams);
+    } else if(parsedUrl.pathname === '/postCardio'){
+        jsonHandler.updateCardio(request, res, bodyParams);
     }
   });
 };
