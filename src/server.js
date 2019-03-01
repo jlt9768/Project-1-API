@@ -9,6 +9,7 @@ const port = process.env.PORT || process.env.NODE_PORT || 3000;
 const urlStruct = {
   '/': htmlHandler.getIndex,
   '/style.css': htmlHandler.getCSS,
+  '/Logo.png': htmlHandler.getLogo,
   '/getUsers': jsonHandler.getUsers,
   '/notReal': jsonHandler.getNotReal,
   '/addUser': jsonHandler.addUser,
@@ -49,10 +50,12 @@ const handlePost = (request, response, parsedUrl) => {
       jsonHandler.addUser(request, res, bodyParams);
     } else if (parsedUrl.pathname === '/postWL') {
       jsonHandler.updateWL(request, res, bodyParams);
-    } else if(parsedUrl.pathname === '/postBW') {
-        jsonHandler.updateBW(request, res, bodyParams);
-    } else if(parsedUrl.pathname === '/postCardio'){
-        jsonHandler.updateCardio(request, res, bodyParams);
+    } else if (parsedUrl.pathname === '/postBW') {
+      jsonHandler.updateBW(request, res, bodyParams);
+    } else if (parsedUrl.pathname === '/postCardio') {
+      jsonHandler.updateCardio(request, res, bodyParams);
+    } else if (parsedUrl.pathname === '/postAll') {
+      jsonHandler.updateAll(request, res, bodyParams);
     }
   });
 };

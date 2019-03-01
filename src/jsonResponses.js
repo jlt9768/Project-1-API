@@ -67,9 +67,135 @@ const addUser = (request, response, body) => {
 
   return respondJSONMeta(request, response, responseCode);
 };
-
-//Update all weight lifting values
-const updateWL = (request, response, body) => {
+//
+// // Update all weight lifting values
+// const updateWL = (request, response, body) => {
+//  const responseJSON = {
+//    message: 'Name is required.',
+//  };
+//
+//  if (!body.name) {
+//    responseJSON.id = 'missingParams';
+//    return respondJSON(request, response, 400, responseJSON);
+//  }
+//
+//  // default status code to 201 created
+//  let responseCode = 201;
+//
+//
+//  if (users[body.name]) {
+//    responseCode = 204;
+//  } else {
+//    users[body.name] = {};
+//  }
+//
+//  // add or update fields for this user name
+//  users[body.name].name = body.name;
+//  if (body.chestPress) {
+//    users[body.name].chestPress = body.chestPress;
+//  }
+//  if (body.bicepCurl) {
+//    users[body.name].bicepCurl = body.bicepCurl;
+//  }
+//  if (body.tricepCurl) {
+//    users[body.name].tricepCurl = body.tricepCurl;
+//  }
+//
+//  if (body.shoulderPress) {
+//    users[body.name].shoulderPress = body.shoulderPress;
+//  }
+//  if (body.legPress) {
+//    users[body.name].legPress = body.legPress;
+//  }
+//
+//  if (responseCode === 201) {
+//    responseJSON.message = 'Created Successfully';
+//    return respondJSON(request, response, responseCode, responseJSON);
+//  }
+//
+//  return respondJSONMeta(request, response, responseCode);
+// };
+//
+// // Update all Body weight values
+// const updateBW = (request, response, body) => {
+//  const responseJSON = {
+//    message: 'Name is required.',
+//  };
+//
+//  if (!body.name) {
+//    responseJSON.id = 'missingParams';
+//    return respondJSON(request, response, 400, responseJSON);
+//  }
+//
+//  // default status code to 201 created
+//  let responseCode = 201;
+//
+//
+//  if (users[body.name]) {
+//    responseCode = 204;
+//  } else {
+//    users[body.name] = {};
+//  }
+//
+//  // add or update fields for this user name
+//  users[body.name].name = body.name;
+//  if (body.pushUps) {
+//    users[body.name].pushUps = body.pushUps;
+//  }
+//  if (body.sitUps) {
+//    users[body.name].sitUps = body.sitUps;
+//  }
+//  if (body.pullUps) {
+//    users[body.name].pullUps = body.pullUps;
+//  }
+//
+//  if (body.burpees) {
+//    users[body.name].burpees = body.burpees;
+//  }
+//
+//  if (responseCode === 201) {
+//    responseJSON.message = 'Created Successfully';
+//    return respondJSON(request, response, responseCode, responseJSON);
+//  }
+//
+//  return respondJSONMeta(request, response, responseCode);
+// };
+//
+// const updateCardio = (request, response, body) => {
+//  const responseJSON = {
+//    message: 'Name is required.',
+//  };
+//
+//  if (!body.name) {
+//    responseJSON.id = 'missingParams';
+//    return respondJSON(request, response, 400, responseJSON);
+//  }
+//
+//  // default status code to 201 created
+//  let responseCode = 201;
+//
+//
+//  if (users[body.name]) {
+//    responseCode = 204;
+//  } else {
+//    users[body.name] = {};
+//  }
+//
+//  // add or update fields for this user name
+//  users[body.name].name = body.name;
+//  if (body.mile) {
+//    users[body.name].mile = body.mile;
+//  }
+//
+//  if (responseCode === 201) {
+//    responseJSON.message = 'Created Successfully';
+//    return respondJSON(request, response, responseCode, responseJSON);
+//  }
+//
+//  return respondJSONMeta(request, response, responseCode);
+// };
+//
+const updateAll = (request, response, body) => {
   const responseJSON = {
     message: 'Name is required.',
   };
@@ -100,45 +226,12 @@ const updateWL = (request, response, body) => {
   if (body.tricepCurl) {
     users[body.name].tricepCurl = body.tricepCurl;
   }
-
   if (body.shoulderPress) {
     users[body.name].shoulderPress = body.shoulderPress;
   }
   if (body.legPress) {
     users[body.name].legPress = body.legPress;
   }
-
-  if (responseCode === 201) {
-    responseJSON.message = 'Created Successfully';
-    return respondJSON(request, response, responseCode, responseJSON);
-  }
-
-  return respondJSONMeta(request, response, responseCode);
-};
-
-//Update all Body weight values
-const updateBW = (request, response, body) => {
-  const responseJSON = {
-    message: 'Name is required.',
-  };
-
-  if (!body.name) {
-    responseJSON.id = 'missingParams';
-    return respondJSON(request, response, 400, responseJSON);
-  }
-
-  // default status code to 201 created
-  let responseCode = 201;
-
-
-  if (users[body.name]) {
-    responseCode = 204;
-  } else {
-    users[body.name] = {};
-  }
-
-  // add or update fields for this user name
-  users[body.name].name = body.name;
   if (body.pushUps) {
     users[body.name].pushUps = body.pushUps;
   }
@@ -148,41 +241,9 @@ const updateBW = (request, response, body) => {
   if (body.pullUps) {
     users[body.name].pullUps = body.pullUps;
   }
-
   if (body.burpees) {
     users[body.name].burpees = body.burpees;
   }
-
-  if (responseCode === 201) {
-    responseJSON.message = 'Created Successfully';
-    return respondJSON(request, response, responseCode, responseJSON);
-  }
-
-  return respondJSONMeta(request, response, responseCode);
-};
-
-const updateCardio = (request, response, body) => {
-  const responseJSON = {
-    message: 'Name is required.',
-  };
-
-  if (!body.name) {
-    responseJSON.id = 'missingParams';
-    return respondJSON(request, response, 400, responseJSON);
-  }
-
-  // default status code to 201 created
-  let responseCode = 201;
-
-
-  if (users[body.name]) {
-    responseCode = 204;
-  } else {
-    users[body.name] = {};
-  }
-
-  // add or update fields for this user name
-  users[body.name].name = body.name;
   if (body.mile) {
     users[body.name].mile = body.mile;
   }
@@ -211,8 +272,6 @@ module.exports = {
   getNotReal,
   getNotRealMeta,
   addUser,
-  updateWL,
-  updateBW,
-  updateCardio,
+  updateAll,
   notFound,
 };

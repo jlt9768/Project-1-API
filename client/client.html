@@ -4,7 +4,6 @@
   <title>Our simple HTTP server</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <link rel="stylesheet" type="text/css" href="/style.css">
-  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
   <script type="text/babel">
   
@@ -18,7 +17,6 @@
 
       console.dir(method);
       if(obj.users && obj.users[nameField.value]) {
-          console.dir("In");
         if(obj.users[nameField.value].chestPress){
             chestPress.value = obj.users[nameField.value].chestPress;
         }else{
@@ -131,72 +129,46 @@
       xhr.send(formData); 
       e.preventDefault();
       return false;
-    };
+  };
 
-    const sendPostWL = (e, nameForm, wlForm) => {
-
-      const nameAction = wlForm.getAttribute('action');
-      const method = wlForm.getAttribute('method');
+    const postWL = (wlForm) => {
       
-      const nameField = nameForm.querySelector('#nameField');
       const chestPress = wlForm.querySelector('#chestPress');
       const bicepCurl = wlForm.querySelector('#bicepCurl');
       const tricepCurl = wlForm.querySelector('#tricepCurl');
       const shoulderPress = wlForm.querySelector('#shoulderPress');
       const legPrss = wlForm.querySelector('#legPress');
-        
-      const xhr = new XMLHttpRequest();
-      xhr.open(method, nameAction);
       
-      //set our request type to x-www-form-urlencoded
-      //which is one of the common types of form data. 
-      //This type has the same format as query strings key=value&key2=value2
-      xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-      xhr.setRequestHeader ('Accept', 'application/json');
+      const formData = `&chestPress=${chestPress.value}&bicepCurl=${bicepCurl.value}&tricepCurl=${tricepCurl.value}&shoulderPress=${shoulderPress.value}&legPress=${legPrss.value}`;
       
-      xhr.onload = () => handleResponse(xhr,method);
-      
-      const formData = `name=${nameField.value}&chestPress=${chestPress.value}&bicepCurl=${bicepCurl.value}&tricepCurl=${tricepCurl.value}&shoulderPress=${shoulderPress.value}&legPress=${legPrss.value}`;
-      
-      xhr.send(formData); 
-      e.preventDefault();
-      return false;
+    return formData;
     };
-    const sendPostBW = (e,nameform, bwForm) => {
 
-      const nameAction = bwForm.getAttribute('action');
-      const method = bwForm.getAttribute('method');
-      
-      const nameField = nameForm.querySelector('#nameField');
+    const postBW = (bwForm) => {
+
       const pushUps = bwForm.querySelector('#pushUps');
       const sitUps = bwForm.querySelector('#sitUps');
       const pullUps = bwForm.querySelector('#pullUps');
       const burpees = bwForm.querySelector('#burpees');
-        
-      const xhr = new XMLHttpRequest();
-      xhr.open(method, nameAction);
       
-      //set our request type to x-www-form-urlencoded
-      //which is one of the common types of form data. 
-      //This type has the same format as query strings key=value&key2=value2
-      xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-      xhr.setRequestHeader ('Accept', 'application/json');
+      const formData = `&pushUps=${pushUps.value}&sitUps=${sitUps.value}&pullUps=${pullUps.value}&burpees=${burpees.value}`;
       
-      xhr.onload = () => handleResponse(xhr,method);
-      
-      const formData = `name=${nameField.value}&pushUps=${pushUps.value}&sitUps=${sitUps.value}&pullUps=${pullUps.value}&burpees=${burpees.value}`;
-      
-      xhr.send(formData); 
-      e.preventDefault();
-      return false;
+        return formData;
     };
-    const sendPostCardio = (e, nameForm, cForm) => {
-      const nameAction = cForm.getAttribute('action');
-      const method = cForm.getAttribute('method');
-      
-      const nameField = nameForm.querySelector('#nameField');
+    const postCardio = (cForm) => {
+    
       const mile = cForm.querySelector('#mile');
       
+      const formData = `&mile=${mile.value}`;
+      
+        return formData;
+    };
+    const sendPostAll = (e, nameForm, submitForm, weightLiftingForm, bodyWeightForm, cardioForm) => {
+        
+      const nameAction = submitForm.getAttribute('action');
+      const method = submitForm.getAttribute('method');    
+        
+      const nameField = nameForm.querySelector('#nameField');
         
       const xhr = new XMLHttpRequest();
       xhr.open(method, nameAction);
@@ -209,12 +181,12 @@
       
       xhr.onload = () => handleResponse(xhr,method);
       
-      const formData = `name=${nameField.value}&mile=${mile.value}`;
-      
+      const formData = `name=${nameField.value}` + postWL(weightLiftingForm) + postBW(bodyWeightForm) + postCardio(cardioForm); 
+    
       xhr.send(formData); 
       e.preventDefault();
       return false;
-    };
+    }
     const sendAjax = (e, getForm) => {
         //console.dir(e);
         //const url = document.querySelector("#urlField").value;
@@ -243,18 +215,17 @@
       const weightLiftingForm = document.querySelector('#weightLiftingForm');
       const bodyWeightForm = document.querySelector('#bodyWeightForm');
       const cardioForm = document.querySelector('#cardioForm');
+      const submitForm = document.querySelector('#submitForm');
+        
         
       const addUser = (e) => sendPost(e, nameForm);
       const getUser = (e) => sendAjax(e, getForm);
-      const updateWL = (e) => sendPostWL(e, nameForm, weightLiftingForm);
-      const updateBW = (e) => sendPostBW(e, nameForm, bodyWeightForm);
-      const updateCardio = (e) => sendPostCardio(e, nameForm, cardioForm);
+        
+      const updateAll = (e) => sendPostAll(e, nameForm, submitForm, weightLiftingForm, bodyWeightForm, cardioForm);
         
       nameForm.addEventListener('submit', addUser);
-      weightLiftingForm.addEventListener('submit', updateWL);
       getForm.addEventListener('submit', getUser);
-      bodyWeightForm.addEventListener('submit', updateBW);
-      cardioForm.addEventListener('submit', updateCardio);
+      submitForm.addEventListener('submit', updateAll);
     };
 
     window.onload = init;
@@ -262,16 +233,12 @@
 </head>
 <body>
   <section id="top">
-    <h2>Fitness Tracker</h2>
+    <image id="logo" src="/Logo.png"></image>
     <form id="nameForm" action="/addUser" method="post">
       <label for="name">Name: </label>
       <input id="nameField" type="text" name="name" />
       <input type="submit" name = "add" value="Add User" />
       
-      <!--<label for="age">Age: </label>
-      <input id="ageField" type="number" name="age" min="0" max="100" step="1"/>
-      <input type="submit" value="Add User" />
-      -->
     </form>
     <form id="getForm" action="/getUser" method="get">
         <input type="submit" name = "get" value="Get User" />
@@ -279,56 +246,70 @@
     <hr>
     <div class="container">
         <div class="row">
+            
             <div class="col-md-4">
                 <h3>Weight Lifting Max</h3>
                 <form id="weightLiftingForm" action="/postWL" method="post">
-                  <label for="chestpress">Chest Press: </label>
-                  <input id="chestPress" type="number" name="chestpress" min="0" max="300" step="1"/>
-                  <br>
-                  <label for="bicepcurl">Bicep Curl: </label>
-                  <input id="bicepCurl" type="number" name="bicepcurl" min="0" max="300" step="1"/>
-                  <br>
-                  <label for="tricepcurl">Tricep Curl: </label>
-                  <input id="tricepCurl" type="number" name="tricepcurl" min="0" max="300" step="1"/>
-                  <br>
-                  <label for="shoulderpress">Shoulder Press: </label>
-                  <input id="shoulderPress" type="number" name="shoulderpress" min="0" max="300" step="1"/>
-                  <br>
-                  <label for="legpress">Leg Press: </label>
-                  <input id="legPress" type="number" name="legpress" min="0" max="300" step="1"/>
-                  <br>
-                  <br>
-                  <input type="submit" value="Update" />
+                    <div class="block">
+                        <label for="chestpress">Chest Press: </label>
+                        <input class="inputArea" id="chestPress" type="number" name="chestpress" min="0" max="300" step="1"/>
+                    </div>
+                  
+                    <div class = "block">
+                        <label for="bicepcurl">Bicep Curl: </label>
+                        <input class="inputArea" id="bicepCurl" type="number" name="bicepcurl" min="0" max="300" step="1"/>
+                    </div>
+                    <div class = "block">
+                        <label for="tricepcurl">Tricep Curl: </label>
+                        <input class="inputArea" id="tricepCurl" type="number" name="tricepcurl" min="0" max="300" step="1"/>
+                    </div>
+                    <div class = "block">
+                        <label for="shoulderpress">Shoulder Press: </label>
+                        <input class="inputArea" id="shoulderPress" type="number" name="shoulderpress" min="0" max="300" step="1"/>
+                    </div>
+                    <div class = "block">
+                        <label for="legpress">Leg Press: </label>
+                        <input class="inputArea" id="legPress" type="number" name="legpress" min="0" max="300" step="1"/>
+                    </div>
                 </form>
             </div>
             <div class="col-md-4">
                 <h3>Body Weight Reps</h3>
                 <form id="bodyWeightForm" action="/postBW" method="post">
-                  <label for="pushups">Push Ups: </label>
-                  <input id="pushUps" type="number" name="pushups" min="0" max="300" step="1"/>
-                  <br>
-                  <label for="situps">Sit Ups: </label>
-                  <input id="sitUps" type="number" name="situps" min="0"  max="300"step="1"/>
-                  <br>
-                  <label for="pullups">Pull Ups: </label>
-                  <input id="pullUps" type="number" name="pullups" min="0" max="300"step="1"/>
-                  <br>
-                  <label for="burpees">Burpees: </label>
-                  <input id="burpees" type="number" name="burpees" min="0" max="300" step="1"/>
-                  <br>
-                  <br>
-                  <input type="submit" value="Update" />
+                    <div class="block">
+                        <label for="pushups">Push Ups: </label>
+                        <input class="inputArea" id="pushUps" type="number" name="pushups" min="0" max="300" step="1"/>
+                    </div>
+                    <div class="block">
+                        <label for="situps">Sit Ups: </label>
+                        <input class="inputArea" id="sitUps" type="number" name="situps" min="0"  max="300"step="1"/>
+                    </div>
+                    <div class="block">
+                        <label for="pullups">Pull Ups: </label>
+                        <input class="inputArea" id="pullUps" type="number" name="pullups" min="0" max="300"step="1"/>
+                    </div>
+                    <div class="block">
+                        <label for="burpees">Burpees: </label>
+                        <input class="inputArea" id="burpees" type="number" name="burpees" min="0" max="300" step="1"/>
+                    </div>
                 </form>
             </div>
             <div class="col-md-4">
                 <h3>Cardio Times</h3>
                 <form id="cardioForm" action="/postCardio" method="post">
-                  <label for="mile">Mile: </label>
-                  <input id="mile"/>
-                  <br>     
-                  <br>
-                  <input type="submit" value="Update" />
+                    <div class="block">
+                        <label for="mile">Mile: </label>
+                        <input class="inputArea" id="mile"/>
+                    </div>     
                 </form>
+            </div>
+            <div class="col-md-12">
+                <form id="submitForm" action=/postAll method="post">
+                    
+                <input type="submit" value="Update" />
+
+                </form>
+            
             </div>
         </div>
     </div>

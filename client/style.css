@@ -19,3 +19,21 @@ html, body {
   font-size: 2em;
   text-align: center;
 }
+#logo{
+    padding-bottom: 10px;
+    padding-top: 10px;
+
+}
+.inputArea{
+    margin-left: 10px;
+
+}
+.block{
+    margin-right: 35px;
+}
+.block label{
+    display: inline-block;
+    width:110px;
+    text-align: right;
+}
+
