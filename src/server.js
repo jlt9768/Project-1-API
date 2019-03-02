@@ -10,6 +10,7 @@ const urlStruct = {
   '/': htmlHandler.getIndex,
   '/style.css': htmlHandler.getCSS,
   '/Logo.png': htmlHandler.getLogo,
+  '/favicon.png': htmlHandler.getIcon,
   '/getUsers': jsonHandler.getUsers,
   '/notReal': jsonHandler.getNotReal,
   '/addUser': jsonHandler.addUser,
