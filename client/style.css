@@ -60,7 +60,7 @@ background-color: #cecece;
     text-align: right;
 }
 /*Button code edited from https://www.w3schools.com/css/tryit.asp?filename=trycss_buttons_animate3 */
-#button {
+.button {
   margin-top: 30px;  
   display: inline-block;
   padding: 15px 25px;
@@ -76,9 +76,9 @@ background-color: #cecece;
   box-shadow: 0 7px #999;
 }
 
-#button:hover {background-color: #234e63}
+.button:hover {background-color: #234e63}
 
-#button:active {
+.button:active {
   background-color: #234e63;
   box-shadow: 0 5px #666;
   transform: translateY(2px);

@@ -229,7 +229,44 @@
         e.preventDefault();
         return false;
     };
-
+    const getPDF = () =>{
+        
+        window.open(`/loadPDF?name=${nameField.value}`,'_blank');
+        
+    } 
+    const sendPDF = () => {
+        
+        
+        const method = 'post';
+        
+        console.log(nameField.value);
+        const xhr = new XMLHttpRequest(); 
+        xhr.open(method, '/createPDF');
+        
+        const formData = `name=${nameField.value}`;
+        
+        xhr.send(formData);
+       
+        getPDF();
+        
+        e.preventDefault();
+        return false;
+    };
+$('#exportForm').submit(function(e){
+    e.preventDefault();
+    e.stopImmediatePropagation();
+        $.ajax({
+            type: "POST",
+            url: $(this).attr( 'action' ),
+            data: `name=${nameField.value}`,
+            complete: () => {
+                
+                getPDF();
+            }
+        });
+        
+        return false;
+    });
     const init = () => {
         
       const nameForm = document.querySelector('#nameForm');
@@ -238,13 +275,19 @@
       const bodyWeightForm = document.querySelector('#bodyWeightForm');
       const cardioForm = document.querySelector('#cardioForm');
       const submitForm = document.querySelector('#submitForm');
-        
+      const exportForm = document.querySelector('#exportForm');
+      const exportButton = document.querySelector("#export");
         
       const addUser = (e) => sendPost(e, nameForm);
       const getUser = (e) => sendAjax(e, getForm);
         
       const updateAll = (e) => sendPostAll(e, nameForm, submitForm, weightLiftingForm, bodyWeightForm, cardioForm);
-        
+      
+      const exportPDF = (e) => {
+          sendPDF(); 
+          //getPDF();
+      };
+    
       nameForm.addEventListener('submit', addUser);
       getForm.addEventListener('submit', getUser);
       submitForm.addEventListener('submit', updateAll);
@@ -333,11 +376,18 @@
             <div class="col-md-12">
                 <form id="submitForm" action=/postAll method="post">
                     
-                <input id="button" type="submit" value="Update" />
+                <input class="button" type="submit" value="Update" />
+
+                </form>           
+            </div>
+            <div class="col-md-12">
+                <form id="exportForm" action=/createPDF method="post">
+                    
+                <input class="button" type="submit" value="Export to PDF" />
 
                 </form>
-            
             </div>
+            
         </div>
     </div>
   </section>
@@ -346,5 +396,6 @@
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 </body>
 </html>

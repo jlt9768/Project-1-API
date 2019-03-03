@@ -1,10 +1,12 @@
 const http = require('http');
 const url = require('url');
 const query = require('querystring');
+const pdfHandler = require('./pdfResponse.js');
 const htmlHandler = require('./htmlResponses.js');
 const jsonHandler = require('./jsonResponses.js');
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
+
 
 const urlStruct = {
   '/': htmlHandler.getIndex,
@@ -29,7 +31,6 @@ const handlePost = (request, response, parsedUrl) => {
   const res = response;
 
   const body = [];
-
   request.on('error', (err) => {
     console.dir(err);
     res.statusCode = 400;
@@ -51,18 +52,24 @@ const handlePost = (request, response, parsedUrl) => {
       jsonHandler.addUser(request, res, bodyParams);
     } else if (parsedUrl.pathname === '/postAll') {
       jsonHandler.updateAll(request, res, bodyParams);
+    } else if (parsedUrl.pathname === '/createPDF') {
+      pdfHandler.getPDF(request, response, bodyParams);
+    } else if (parsedUrl.pathname === '/loadPDF') {
+      htmlHandler.getPDF(request, response, bodyParams.name);
     }
   });
 };
 const onRequest = (request, response) => {
   const parsedUrl = url.parse(request.url);
-  // const params = query.parse(parsedUrl.query);
+  const params = query.parse(parsedUrl.query);
   // const acceptedTypes = request.headers.accept.split(',');
 
   switch (request.method) {
     case 'GET':
       if (urlStruct[parsedUrl.pathname]) {
         urlStruct[parsedUrl.pathname](request, response);
+      } else if (parsedUrl.pathname === '/loadPDF') {
+        htmlHandler.getPDF(request, response, params);
       } else {
         urlStruct.notFound(request, response);
       }
