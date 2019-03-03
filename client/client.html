@@ -9,16 +9,19 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
   <script type="text/babel">
   
-  const parseJSON = (xhr, content,method) => {
+  const parseJSON = (xhr, content,method,success) => {
       const obj = JSON.parse(xhr.response);
       
-      //const nameField = document.querySelector("#nameForm").querySelector('#nameField');
-      //const chestPress = document.querySelector("#weightLiftingForm").querySelector('#chestPress');
-      //const bicepCurl = document.querySelector("#weightLiftingForm").querySelector('#bicepCurl');
-      //const tricepCurl = document.querySelector("#weightLiftingForm").querySelector('#tricepCurl');
-
-      console.dir(method);
-      if(obj.users && obj.users[nameField.value]) {
+      const p = document.querySelector("#message");
+      
+      //Check to see if the user in the name field exists and fill out any data they have added to the server
+      if(success && obj.users && obj.users[nameField.value]) {
+        p.textContent = `Loaded User`;
+        p.style.color = "black";
+        setTimeout(function() {
+           p.textContent = "";
+        }, 2000);
+          
         if(obj.users[nameField.value].chestPress){
             chestPress.value = obj.users[nameField.value].chestPress;
         }else{
@@ -70,43 +73,61 @@
             mile.value = "";
         }
       }else if((!obj.users || !obj.users[nameField.value])&& method === "get"){
-            const p = document.createElement('p');
-            p.textContent = `Message: No such user exists`;
-            content.appendChild(p);
+            
+            p.textContent = `No such user exists`;
+            p.style.color = "red";
       }
     };
 
-
+  //Handle responses 
   const handleResponse = (xhr,method) => {
       const content = document.querySelector('#content');
-      
-      //switch(xhr.status){
-      //    case 200:
-      //        content.innerHTML = `<b> Success </b>`;
-      //        break;
-      //    case 201:
-      //        content.innerHTML = `<b> Created </b>`;
-      //        break;
-      //    case 204:
-      //        content.innerHTML = `<b> Updated </b>`;
-      //        break;
-      //    case 400:
-      //        content.innerHTML = `<b> Bad Request </b>`;
-      //        break;
-      //    case 404:
-      //        content.innerHTML = `<b> Not Found </b>`;
-      //        break;
-      //    default:
-      //        content.innerHTML = `<b> Error not implemented by client </b>`;
-      //        break;
-      //}
+      const p = document.querySelector("#message");
+      let success = false;
+      switch(xhr.status){
+              
+        case 200:
+            
+            success = true;
+            break;
+        case 201:
+            
+            p.textContent = `Created User`;
+            p.style.color = "black";
+            setTimeout(function() {
+               p.textContent = "";
+            }, 2000);
+            break;
+        case 204:
+          p.textContent = `Updated User`;
+              p.style.color = "black";
+              setTimeout(function() {
+                 p.textContent = "";
+              }, 2000);
+          break;
+
+        case 400:             
+              p.textContent = `Can't update without a name`;
+              p.style.color = "red";
+              break;
+          case 404:
+              p.textContent = `Not found`;
+              p.style.color = "red";
+              break;
+          default:
+              p.textContent = `Error code not implemented`;
+              p.style.color = "red";
+              break;
+              
+      }
       
       if(xhr.response !== ""){
-          parseJSON(xhr,content,method);
+          parseJSON(xhr,content,method, success);
       }
       
   };
 
+  //Post only the user's name
   const sendPost = (e, nameForm) => {
 
       const nameAction = nameForm.getAttribute('action');
@@ -133,6 +154,8 @@
       return false;
   };
 
+
+    //Setup formdata post for weight lifting data
     const postWL = (wlForm) => {
       
       const chestPress = wlForm.querySelector('#chestPress');
@@ -146,6 +169,7 @@
     return formData;
     };
 
+     //Setup formdata post for body weight data
     const postBW = (bwForm) => {
 
       const pushUps = bwForm.querySelector('#pushUps');
@@ -157,6 +181,8 @@
       
         return formData;
     };
+    
+    //Setup formdata post for cardio data
     const postCardio = (cForm) => {
     
       const mile = cForm.querySelector('#mile');
@@ -165,6 +191,8 @@
       
         return formData;
     };
+
+    //Send all data to the server
     const sendPostAll = (e, nameForm, submitForm, weightLiftingForm, bodyWeightForm, cardioForm) => {
         
       const nameAction = submitForm.getAttribute('action');
@@ -190,18 +218,11 @@
       return false;
     }
     const sendAjax = (e, getForm) => {
-        //console.dir(e);
-        //const url = document.querySelector("#urlField").value;
         const method = 'get';
         
         const xhr = new XMLHttpRequest(); 
         xhr.open(method, '/getUsers');
         
-        //if(method === 'get'){
-        //    
-        //}else{
-        //    xhr.onload = () => handleResponse(xhr);
-        //}
         
         xhr.onload = () => handleResponse(xhr,method);
         xhr.send(getForm);
@@ -213,7 +234,6 @@
         
       const nameForm = document.querySelector('#nameForm');
       const getForm = document.querySelector ('#getForm');
-      //const userform = document.querySelector('#userForm');
       const weightLiftingForm = document.querySelector('#weightLiftingForm');
       const bodyWeightForm = document.querySelector('#bodyWeightForm');
       const cardioForm = document.querySelector('#cardioForm');
@@ -235,21 +255,26 @@
 </head>
 <body>
   <section id="top">
+    <div id= "upper">
     <image id="logo" src="/Logo.png"></image>
     <form id="nameForm" action="/addUser" method="post">
       <label for="name">Name: </label>
-      <input id="nameField" type="text" name="name" />
-      <input type="submit" name = "add" value="Add User" />
+      <input class="inputArea2" id="nameField" type="text" name="name" />
+      <input class="button2" type="submit" name = "add" value="Add User" />
       
     </form>
     <form id="getForm" action="/getUser" method="get">
-        <input type="submit" name = "get" value="Get User" />
+        <input id = "getButton" class="button2" type="submit" name = "get" value="Get User" />
     </form>
-    <hr>
+    
+    </div>
+    <section id="content">
+        <p id="message"></p>
+    </section>
     <div class="container">
         <div class="row">
             
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <h3>Weight Lifting Max</h3>
                 <form id="weightLiftingForm" action="/postWL" method="post">
                     <div class="block">
@@ -275,7 +300,7 @@
                     </div>
                 </form>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3 col-md-offset-1">
                 <h3>Body Weight Reps</h3>
                 <form id="bodyWeightForm" action="/postBW" method="post">
                     <div class="block">
@@ -296,8 +321,8 @@
                     </div>
                 </form>
             </div>
-            <div class="col-md-4">
-                <h3>Cardio Times</h3>
+            <div class="col-md-3 col-md-offset-1">
+                <h3>Cardio Best Times</h3>
                 <form id="cardioForm" action="/postCardio" method="post">
                     <div class="block">
                         <label for="mile">Mile: </label>
@@ -308,37 +333,15 @@
             <div class="col-md-12">
                 <form id="submitForm" action=/postAll method="post">
                     
-                <input type="submit" value="Update" />
+                <input id="button" type="submit" value="Update" />
 
                 </form>
             
             </div>
         </div>
     </div>
-
-    <!--
-    <div class="container">
-        <div class="row">
-            <div class="col-md-4">
-                
-            </div>
-        </div>
-    </div>
-    -->
-    <!--<form id="userForm" action="/getUsers" method="get">
-      <select id='urlField'>
-        <option value='/getUsers'>/getUsers</option>
-        <option value='/notReal'>/notReal</option>
-      </select>
-      <select id="methodSelect">
-        <option value="get">GET</option>
-        <option value="head">HEAD</option>
-      </select>
-      <input type="submit" value="Get User" />
-    </form>-->
   </section>
-  <section id="content">
-  </section>
+  
     
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>

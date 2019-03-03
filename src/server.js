@@ -49,12 +49,6 @@ const handlePost = (request, response, parsedUrl) => {
     // pass to our addUser function
     if (parsedUrl.pathname === '/addUser') {
       jsonHandler.addUser(request, res, bodyParams);
-    } else if (parsedUrl.pathname === '/postWL') {
-      jsonHandler.updateWL(request, res, bodyParams);
-    } else if (parsedUrl.pathname === '/postBW') {
-      jsonHandler.updateBW(request, res, bodyParams);
-    } else if (parsedUrl.pathname === '/postCardio') {
-      jsonHandler.updateCardio(request, res, bodyParams);
     } else if (parsedUrl.pathname === '/postAll') {
       jsonHandler.updateAll(request, res, bodyParams);
     }
