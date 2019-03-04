@@ -1,3 +1,4 @@
+const fs = require('fs');
 const http = require('http');
 const url = require('url');
 const query = require('querystring');
@@ -16,8 +17,6 @@ const urlStruct = {
   '/getUsers': jsonHandler.getUsers,
   '/notReal': jsonHandler.getNotReal,
   '/addUser': jsonHandler.addUser,
-  '/postWL': jsonHandler.postWL,
-  '/postBW': jsonHandler.postBW,
   notFound: jsonHandler.notFound,
 };
 const urlMetaStruct = {
@@ -53,23 +52,33 @@ const handlePost = (request, response, parsedUrl) => {
     } else if (parsedUrl.pathname === '/postAll') {
       jsonHandler.updateAll(request, res, bodyParams);
     } else if (parsedUrl.pathname === '/createPDF') {
+      //Create the PDF if a post request comes in for creating the PDF
       pdfHandler.getPDF(request, response, bodyParams);
-    } else if (parsedUrl.pathname === '/loadPDF') {
-      htmlHandler.getPDF(request, response, bodyParams.name);
     }
   });
 };
 const onRequest = (request, response) => {
   const parsedUrl = url.parse(request.url);
   const params = query.parse(parsedUrl.query);
-  // const acceptedTypes = request.headers.accept.split(',');
 
   switch (request.method) {
     case 'GET':
       if (urlStruct[parsedUrl.pathname]) {
         urlStruct[parsedUrl.pathname](request, response);
       } else if (parsedUrl.pathname === '/loadPDF') {
-        htmlHandler.getPDF(request, response, params);
+          
+        ////  Return the PDF with the given name param if it exists otherwise notFound
+        fs.access(`${__dirname}/../src/docs/${params.name}.pdf`, fs.F_OK, (err) => {
+           if(err){
+                jsonHandler.notFound(request,response);
+           };
+            
+            if(fs.existsSync(`${__dirname}/../src/docs/${params.name}.pdf`)){
+                htmlHandler.getPDF(request, response, params);
+            }
+            
+        });
+            
       } else {
         urlStruct.notFound(request, response);
       }

@@ -32,6 +32,7 @@ const getIcon = (request, response) => {
   response.end();
 };
 
+// Return the user requested pdf
 const getPDF = (request, response, params) => {
   response.writeHead(200, { 'Content-Type': 'application/pdf' });
   response.write(fs.readFileSync(`${__dirname}/../src/docs/${params.name}.pdf`));

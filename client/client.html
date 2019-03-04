@@ -229,41 +229,34 @@
         e.preventDefault();
         return false;
     };
+
+    //Get the pdf document in a new tab
     const getPDF = () =>{
         
         window.open(`/loadPDF?name=${nameField.value}`,'_blank');
         
     } 
-    const sendPDF = () => {
-        
-        
-        const method = 'post';
-        
-        console.log(nameField.value);
-        const xhr = new XMLHttpRequest(); 
-        xhr.open(method, '/createPDF');
-        
-        const formData = `name=${nameField.value}`;
-        
-        xhr.send(formData);
-       
-        getPDF();
-        
+
+    //jQuery was needed to prevent the POST request from being sent twice on click
+    $('#exportForm').submit(function(e){
         e.preventDefault();
-        return false;
-    };
-$('#exportForm').submit(function(e){
-    e.preventDefault();
-    e.stopImmediatePropagation();
-        $.ajax({
-            type: "POST",
-            url: $(this).attr( 'action' ),
-            data: `name=${nameField.value}`,
-            complete: () => {
-                
-                getPDF();
-            }
-        });
+        e.stopImmediatePropagation();
+        const p = document.querySelector("#message");
+        if(nameField.value !== "") {
+            $.ajax({
+                type: "POST",
+                url: $(this).attr( 'action' ),
+                data: `name=${nameField.value}`+ postWL(weightLiftingForm) + postBW(bodyWeightForm) + postCardio(cardioForm),
+                complete: () => {
+                    p.textContent = ``;
+                    getPDF();
+                }
+            });
+        }else{
+            
+            p.textContent = `User must have a name to export`;
+            p.style.color = "red";
+        }
         
         return false;
     });
@@ -276,17 +269,13 @@ $('#exportForm').submit(function(e){
       const cardioForm = document.querySelector('#cardioForm');
       const submitForm = document.querySelector('#submitForm');
       const exportForm = document.querySelector('#exportForm');
-      const exportButton = document.querySelector("#export");
         
       const addUser = (e) => sendPost(e, nameForm);
       const getUser = (e) => sendAjax(e, getForm);
         
       const updateAll = (e) => sendPostAll(e, nameForm, submitForm, weightLiftingForm, bodyWeightForm, cardioForm);
       
-      const exportPDF = (e) => {
-          sendPDF(); 
-          //getPDF();
-      };
+
     
       nameForm.addEventListener('submit', addUser);
       getForm.addEventListener('submit', getUser);
